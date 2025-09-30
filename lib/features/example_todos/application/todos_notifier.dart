@@ -9,6 +9,7 @@ import 'package:app_management/features/example_todos/domain/repositories/todo_r
 import 'package:app_management/features/example_todos/domain/value_objects/value_objects.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 class TodosNotifier extends AsyncNotifier<List<Todo>> {
   late final TodoRepository _repository = ref.read(todoRepositoryProvider);
