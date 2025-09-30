@@ -1,10 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:app_management/app/router/app_router.dart';
 import 'package:app_management/features/example_todos/application/todos_notifier.dart';
 import 'package:app_management/features/example_todos/domain/value_objects/value_objects.dart';
 import 'package:app_management/features/example_todos/presentation/widgets/todo_list_item.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TodosPage extends ConsumerStatefulWidget {
   const TodosPage({super.key});
@@ -24,8 +23,8 @@ class _TodosPageState extends ConsumerState<TodosPage> {
 
   @override
   void dispose() {
-    _scrollController.removeListener(_onScroll);
-    _scrollController.dispose();
+    _scrollController..removeListener(_onScroll)
+    ..dispose();
     super.dispose();
   }
 

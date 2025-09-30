@@ -13,10 +13,10 @@ class AppConfig {
   });
 
   factory AppConfig.fromEnvironment() {
-    final flavorString = const String.fromEnvironment('BUILD_FLAVOR', defaultValue: 'dev');
-    final apiBaseUrl = const String.fromEnvironment('API_BASE_URL', defaultValue: 'https://dev.api.example.com');
-    final sentryDsn = const String.fromEnvironment('SENTRY_DSN', defaultValue: 'https://public@sentry.invalid/1');
-    final logLevelString = const String.fromEnvironment('LOG_LEVEL', defaultValue: kDebugMode ? 'debug' : 'warning');
+    const flavorString = String.fromEnvironment('BUILD_FLAVOR', defaultValue: 'dev');
+    const apiBaseUrl = String.fromEnvironment('API_BASE_URL', defaultValue: 'https://dev.api.example.com');
+    const sentryDsn = String.fromEnvironment('SENTRY_DSN', defaultValue: 'https://public@sentry.invalid/1');
+    const logLevelString = String.fromEnvironment('LOG_LEVEL', defaultValue: kDebugMode ? 'debug' : 'warning');
 
     return AppConfig(
       apiBaseUrl: apiBaseUrl,

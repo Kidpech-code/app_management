@@ -1,10 +1,9 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:app_management/core/utils/connectivity.dart';
+import 'package:app_management/core/utils/logger.dart';
 import 'package:dio/dio.dart';
-
-import '../../utils/connectivity.dart';
-import '../../utils/logger.dart';
 
 class RetryInterceptor extends Interceptor {
   RetryInterceptor({
@@ -21,10 +20,11 @@ class RetryInterceptor extends Interceptor {
   final Duration baseDelay;
   Dio? _dio;
 
+  // ignore: use_setters_to_change_properties
   void attach(Dio dio) => _dio = dio;
 
   @override
-  void onError(DioException err, ErrorInterceptorHandler handler) async {
+  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
     if (!_shouldRetry(err)) {
       handler.next(err);
       return;

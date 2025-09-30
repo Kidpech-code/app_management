@@ -1,9 +1,8 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:app_management/app/di/providers.dart';
 import 'package:app_management/features/auth/application/auth_state.dart';
 import 'package:app_management/features/auth/domain/entities/auth_user.dart';
 import 'package:app_management/features/auth/domain/repositories/auth_repository.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AuthNotifier extends AsyncNotifier<AuthState> {
   AuthRepository get _repository => ref.read(authRepositoryProvider);

@@ -1,4 +1,4 @@
-import 'failures.dart';
+import 'package:app_management/core/error/failures.dart';
 
 sealed class Result<T> {
   const Result();

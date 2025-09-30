@@ -1,13 +1,14 @@
-import 'dart:async';
+// ignore_for_file: lines_longer_than_80_chars
 
-import 'package:dio/dio.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:async';
 
 import 'package:app_management/app/di/providers.dart';
 import 'package:app_management/core/error/result.dart';
 import 'package:app_management/features/example_todos/domain/entities/todo.dart';
 import 'package:app_management/features/example_todos/domain/repositories/todo_repository.dart';
 import 'package:app_management/features/example_todos/domain/value_objects/value_objects.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TodosNotifier extends AsyncNotifier<List<Todo>> {
   late final TodoRepository _repository = ref.read(todoRepositoryProvider);

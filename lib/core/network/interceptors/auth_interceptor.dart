@@ -1,8 +1,9 @@
+// ignore_for_file: use_setters_to_change_properties
+
 import 'dart:async';
 
+import 'package:app_management/core/utils/logger.dart';
 import 'package:dio/dio.dart';
-
-import '../../utils/logger.dart';
 
 const skipAuthKey = 'skip_auth';
 
@@ -32,7 +33,7 @@ class AuthInterceptor extends Interceptor {
   bool _shouldSkip(RequestOptions options) => options.extra[skipAuthKey] == true;
 
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+  Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     if (_shouldSkip(options)) {
       handler.next(options);
       return;
@@ -45,7 +46,7 @@ class AuthInterceptor extends Interceptor {
   }
 
   @override
-  void onError(DioException err, ErrorInterceptorHandler handler) async {
+  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
     final response = err.response;
     if (_dio == null || _shouldSkip(err.requestOptions) || response?.statusCode != 401) {
       handler.next(err);

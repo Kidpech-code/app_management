@@ -24,7 +24,7 @@ void main() {
   });
 
   test('initializes with authenticated user when repository returns user', () async {
-    final user = const AuthUser(id: '1', email: 'user@test.com');
+    const user = AuthUser(id: '1', email: 'user@test.com');
     when(repository.currentUser).thenAnswer((_) async => user);
     when(() => repository.cachedAccessToken()).thenAnswer((_) async => 'token');
 
@@ -35,7 +35,7 @@ void main() {
   });
 
   test('signIn delegates to repository and updates state', () async {
-    final user = const AuthUser(id: '1', email: 'user@test.com');
+    const user = AuthUser(id: '1', email: 'user@test.com');
     when(repository.currentUser).thenAnswer((_) async => null);
     when(() => repository.signIn(email: any(named: 'email'), password: any(named: 'password'))).thenAnswer((_) async => user);
     when(() => repository.refreshToken()).thenAnswer((_) async => null);
@@ -62,7 +62,7 @@ void main() {
   });
 
   test('refreshSession returns new token when successful', () async {
-    final user = const AuthUser(id: '1', email: 'user@test.com');
+    const user = AuthUser(id: '1', email: 'user@test.com');
     final tokenPair = TokenPair(accessToken: 'new', refreshToken: 'refresh', expiresAt: DateTime.now().add(const Duration(hours: 1)));
     when(repository.currentUser).thenAnswer((_) async => user);
     when(repository.refreshToken).thenAnswer((_) async => tokenPair);

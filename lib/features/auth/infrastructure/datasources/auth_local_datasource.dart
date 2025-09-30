@@ -1,8 +1,7 @@
-import 'package:hive_flutter/hive_flutter.dart';
-
 import 'package:app_management/core/storage/hive_boxes.dart';
 import 'package:app_management/features/auth/domain/entities/auth_user.dart';
 import 'package:app_management/features/auth/domain/entities/token_pair.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class AuthLocalDataSource {
   AuthLocalDataSource()
@@ -31,7 +30,7 @@ class AuthLocalDataSource {
   TokenPair? readTokens() {
     final dynamic json = _secureBox.get(_tokenKey);
     if (json is Map) {
-      return TokenPair.fromJson(Map<String, dynamic>.from(json as Map));
+      return TokenPair.fromJson(Map<String, dynamic>.from(json));
     }
     return null;
   }
@@ -39,7 +38,7 @@ class AuthLocalDataSource {
   AuthUser? readUser() {
     final dynamic json = _prefsBox.get(_userKey);
     if (json is Map) {
-      return AuthUser.fromJson(Map<String, dynamic>.from(json as Map));
+      return AuthUser.fromJson(Map<String, dynamic>.from(json));
     }
     return null;
   }

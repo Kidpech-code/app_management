@@ -1,8 +1,7 @@
+import 'package:app_management/core/utils/logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/utils/logger.dart';
-
-class AppProviderObserver extends ProviderObserver {
+final class AppProviderObserver extends ProviderObserver {
   AppProviderObserver(this._logger);
 
   final AppLogger _logger;

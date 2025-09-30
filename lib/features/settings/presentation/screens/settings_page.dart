@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:app_management/app/di/providers.dart';
 import 'package:app_management/features/auth/application/auth_notifier.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -38,7 +37,7 @@ class SettingsPage extends ConsumerWidget {
           ),
           const SizedBox(height: 24),
           const Text('Deep link examples:'),
-          SelectableText('myapp://todos/42\nhttps://example.com/todos/42'),
+          const SelectableText('myapp://todos/42\nhttps://example.com/todos/42'),
         ],
       ),
     );

@@ -1,10 +1,9 @@
+import 'package:app_management/core/config/app_config.dart';
+import 'package:app_management/core/network/interceptors/auth_interceptor.dart';
+import 'package:app_management/core/network/interceptors/retry_interceptor.dart';
+import 'package:app_management/core/utils/logger.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-
-import '../config/app_config.dart';
-import '../utils/logger.dart';
-import 'interceptors/auth_interceptor.dart';
-import 'interceptors/retry_interceptor.dart';
 
 class DioClient {
   DioClient({

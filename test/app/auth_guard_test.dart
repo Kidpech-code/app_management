@@ -16,7 +16,7 @@ class _MockGoRouterState extends Mock implements GoRouterState {}
 
 class _FakeBuildContext extends Fake implements BuildContext {}
 
-final _guardProvider = Provider<AuthGuard>((ref) => AuthGuard(ref));
+final _guardProvider = Provider<AuthGuard>(AuthGuard.new);
 
 void main() {
   setUpAll(() {
@@ -26,6 +26,7 @@ void main() {
   test('redirects to login when unauthenticated and accessing protected route', () async {
     final repository = _MockAuthRepository();
     when(repository.currentUser).thenAnswer((_) async => null);
+    // ignore: lines_longer_than_80_chars
     final container = ProviderContainer(overrides: [authRepositoryProvider.overrideWithValue(repository)]);
     addTearDown(container.dispose);
     await container.read(authNotifierProvider.future);

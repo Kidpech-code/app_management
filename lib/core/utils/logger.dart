@@ -1,8 +1,7 @@
 import 'dart:developer' as developer;
 
+import 'package:app_management/core/config/app_config.dart';
 import 'package:flutter/foundation.dart';
-
-import '../config/app_config.dart';
 
 class AppLogger {
   AppLogger({required AppConfig config}) : _enabled = config.enableLogging;
