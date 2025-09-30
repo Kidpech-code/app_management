@@ -15,6 +15,7 @@ class TodosNotifier extends AsyncNotifier<List<Todo>> {
   StreamSubscription<List<Todo>>? _subscription;
   int _currentPage = 1;
   bool _hasMore = true;
+  bool _isLoadingMore = false;
 
   @override
   Future<List<Todo>> build() async {
@@ -27,17 +28,27 @@ class TodosNotifier extends AsyncNotifier<List<Todo>> {
         state = AsyncData(todos);
       }
     });
+    _cancelToken = CancelToken();
     final result = await _repository.fetchTodos(page: 1, cancelToken: _cancelToken);
+    _cancelToken = null;
     return result.when(success: (data) => data, failure: (failure) => throw failure);
   }
 
   Future<void> refresh({bool forceNetwork = false}) async {
     state = const AsyncLoading();
-    final result = await _repository.fetchTodos(page: 1, forceRefresh: forceNetwork);
+    _cancelToken?.cancel('refresh');
+    _cancelToken = CancelToken();
+    final result = await _repository.fetchTodos(
+      page: 1,
+      cancelToken: _cancelToken,
+      forceRefresh: forceNetwork,
+    );
+    _cancelToken = null;
     state = result.when(
       success: (data) {
         _currentPage = 1;
         _hasMore = data.isNotEmpty;
+        _isLoadingMore = false;
         return AsyncData(data);
       },
       failure: (failure) => AsyncError<Object>(failure, StackTrace.current),
@@ -45,22 +56,30 @@ class TodosNotifier extends AsyncNotifier<List<Todo>> {
   }
 
   Future<void> loadMore() async {
-    if (!_hasMore) {
+    if (!_hasMore || _isLoadingMore) {
       return;
     }
     final previous = state.value ?? <Todo>[];
     _cancelToken = CancelToken();
+    _isLoadingMore = true;
     final result = await _repository.fetchTodos(page: _currentPage + 1, cancelToken: _cancelToken);
     result.when(
       success: (data) {
         if (data.isEmpty) {
           _hasMore = false;
+          _isLoadingMore = false;
+          _cancelToken = null;
           return;
         }
         _currentPage += 1;
+        _isLoadingMore = false;
+        _cancelToken = null;
         state = AsyncData([...previous, ...data]);
       },
-      failure: (_) {},
+      failure: (_) {
+        _isLoadingMore = false;
+        _cancelToken = null;
+      },
     );
   }
 
