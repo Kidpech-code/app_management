@@ -34,7 +34,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         final messenger = ScaffoldMessenger.of(context);
         messenger.showSnackBar(SnackBar(content: Text(next.error.toString())));
       }
-      final value = next.valueOrNull;
+      final value = next.asData?.value;
       if (value?.status == AuthStatus.authenticated) {
         final target = widget.redirectTo?.isNotEmpty == true ? widget.redirectTo! : TodosRoute.location;
         GoRouter.of(context).go(target);

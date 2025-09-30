@@ -52,7 +52,7 @@ class TodosNotifier extends AsyncNotifier<List<Todo>> {
         _isLoadingMore = false;
         return AsyncData(data);
       },
-      failure: (failure) => AsyncError<Object>(failure, StackTrace.current),
+      failure: (failure) => AsyncError<List<Todo>>(failure, StackTrace.current),
     );
   }
 
@@ -60,7 +60,7 @@ class TodosNotifier extends AsyncNotifier<List<Todo>> {
     if (!_hasMore || _isLoadingMore) {
       return;
     }
-    final previous = state.value ?? <Todo>[];
+    final previous = state.asData?.value ?? <Todo>[];
     _cancelToken = CancelToken();
     _isLoadingMore = true;
     final result = await _repository.fetchTodos(page: _currentPage + 1, cancelToken: _cancelToken);
@@ -102,7 +102,7 @@ final filteredTodosProvider = Provider<List<Todo>>((ref) {
 });
 
 final todoByIdProvider = Provider.family<Todo?, String>((ref, id) {
-  final todos = ref.watch(todosNotifierProvider.select((value) => value.value));
+  final todos = ref.watch(todosNotifierProvider.select((value) => value.asData?.value));
   if (todos == null) {
     return null;
   }

@@ -7,6 +7,7 @@ import 'package:app_management/features/auth/domain/repositories/auth_repository
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:riverpod/riverpod.dart' show ProviderOverride;
 
 class _MockAuthRepository extends Mock implements AuthRepository {}
 
@@ -16,7 +17,9 @@ void main() {
 
   setUp(() {
     repository = _MockAuthRepository();
-    container = ProviderContainer(overrides: [authRepositoryProvider.overrideWithValue(repository)]);
+    container = ProviderContainer(
+      overrides: <ProviderOverride>[authRepositoryProvider.overrideWithValue(repository)],
+    );
   });
 
   tearDown(() {
@@ -45,8 +48,8 @@ void main() {
     await container.read(authNotifierProvider.notifier).signIn(email: 'user@test.com', password: 'secret');
 
     final authState = container.read(authNotifierProvider);
-    expect(authState.value?.status, AuthStatus.authenticated);
-    expect(authState.value?.user, user);
+    expect(authState.asData?.value.status, AuthStatus.authenticated);
+    expect(authState.asData?.value.user, user);
   });
 
   test('refreshSession returns null when repository fails', () async {
@@ -58,7 +61,7 @@ void main() {
     final result = await container.read(authNotifierProvider.notifier).refreshSession();
 
     expect(result, isNull);
-    expect(container.read(authNotifierProvider).value?.status, AuthStatus.unauthenticated);
+    expect(container.read(authNotifierProvider).asData?.value.status, AuthStatus.unauthenticated);
   });
 
   test('refreshSession returns new token when successful', () async {
@@ -71,6 +74,6 @@ void main() {
     final result = await container.read(authNotifierProvider.notifier).refreshSession();
 
     expect(result, tokenPair.accessToken);
-    expect(container.read(authNotifierProvider).value?.status, AuthStatus.authenticated);
+    expect(container.read(authNotifierProvider).asData?.value.status, AuthStatus.authenticated);
   });
 }

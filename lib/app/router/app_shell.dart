@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
-import 'app_router.dart';
+import 'package:app_management/app/router/app_router.dart';
 
 class AppShell extends StatelessWidget {
   const AppShell({super.key, required this.child, required this.location});
@@ -9,12 +8,7 @@ class AppShell extends StatelessWidget {
   final Widget child;
   final String location;
 
-  int get _currentIndex {
-    if (location.startsWith(const SettingsRoute().location)) {
-      return 1;
-    }
-    return 0;
-  }
+  int get _currentIndex => location.startsWith(SettingsRoute.location) ? 1 : 0;
 
   @override
   Widget build(BuildContext context) {
@@ -25,11 +19,9 @@ class AppShell extends StatelessWidget {
         onDestinationSelected: (index) {
           switch (index) {
             case 0:
-              const TodosRoute().go(context);
-              break;
+              TodosRoute.go(context);
             case 1:
-              const SettingsRoute().go(context);
-              break;
+              SettingsRoute.go(context);
           }
         },
         destinations: const <NavigationDestination>[

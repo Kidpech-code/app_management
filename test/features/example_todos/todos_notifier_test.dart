@@ -9,6 +9,7 @@ import 'package:app_management/features/example_todos/domain/repositories/todo_r
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:riverpod/riverpod.dart' show ProviderOverride;
 
 class _MockTodoRepository extends Mock implements TodoRepository {}
 
@@ -19,7 +20,9 @@ void main() {
   setUp(() {
     repository = _MockTodoRepository();
     when(repository.watchTodos).thenAnswer((_) => const Stream<List<Todo>>.empty());
-    container = ProviderContainer(overrides: [todoRepositoryProvider.overrideWithValue(repository)]);
+    container = ProviderContainer(
+      overrides: <ProviderOverride>[todoRepositoryProvider.overrideWithValue(repository)],
+    );
   });
 
   tearDown(container.dispose);
@@ -57,7 +60,7 @@ void main() {
     await container.read(todosNotifierProvider.future);
     await container.read(todosNotifierProvider.notifier).loadMore();
 
-    final data = container.read(todosNotifierProvider).value;
+    final data = container.read(todosNotifierProvider).asData?.value;
     expect(data, [...firstPage, ...secondPage]);
   });
 
