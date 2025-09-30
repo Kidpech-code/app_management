@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -5,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:app_management/app/di/providers.dart';
 import 'package:app_management/app/router/app_shell.dart';
 import 'package:app_management/app/router/guards/auth_guard.dart';
+import 'package:app_management/features/auth/application/auth_notifier.dart';
 import 'package:app_management/features/auth/presentation/screens/login_page.dart';
 import 'package:app_management/features/example_todos/presentation/screens/todo_detail_page.dart';
 import 'package:app_management/features/example_todos/presentation/screens/todos_page.dart';
@@ -13,6 +16,7 @@ import 'package:app_management/features/settings/presentation/screens/settings_p
 final routerProvider = Provider<GoRouter>((ref) {
   final guard = AuthGuard(ref);
   final notifier = ref.read(authNotifierProvider.notifier);
+  final refreshListenable = StreamRouterRefreshListenable(notifier.stream);
   final router = GoRouter(
     initialLocation: TodosRoute.location,
     routes: <RouteBase>[
@@ -46,9 +50,12 @@ final routerProvider = Provider<GoRouter>((ref) {
     ],
     redirect: guard.redirect,
     debugLogDiagnostics: ref.read(appConfigProvider).enableLogging,
-    refreshListenable: GoRouterRefreshStream(notifier.stream),
+    refreshListenable: refreshListenable,
   );
-  ref.onDispose(router.dispose);
+  ref.onDispose(() {
+    refreshListenable.dispose();
+    router.dispose();
+  });
   return router;
 });
 
@@ -88,4 +95,17 @@ class SettingsRoute {
   static const location = path;
 
   static void go(BuildContext context) => context.go(location);
+}
+
+class StreamRouterRefreshListenable extends ChangeNotifier {
+  StreamRouterRefreshListenable(Stream<dynamic> stream)
+      : _subscription = stream.listen((_) => notifyListeners());
+
+  final StreamSubscription<dynamic> _subscription;
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
 }

@@ -10,7 +10,7 @@ class SettingsPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final config = ref.watch(appConfigProvider);
     final authState = ref.watch(authNotifierProvider);
-    final user = authState.valueOrNull?.user;
+    final user = authState.asData?.value.user;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Settings')),

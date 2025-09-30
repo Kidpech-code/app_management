@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:riverpod/riverpod.dart' show ProviderOverride;
 
 class _MockAuthRepository extends Mock implements AuthRepository {}
 
@@ -27,7 +28,9 @@ void main() {
     final repository = _MockAuthRepository();
     when(repository.currentUser).thenAnswer((_) async => null);
     // ignore: lines_longer_than_80_chars
-    final container = ProviderContainer(overrides: [authRepositoryProvider.overrideWithValue(repository)]);
+    final container = ProviderContainer(
+      overrides: <ProviderOverride>[authRepositoryProvider.overrideWithValue(repository)],
+    );
     addTearDown(container.dispose);
     await container.read(authNotifierProvider.future);
 
@@ -45,7 +48,9 @@ void main() {
     final repository = _MockAuthRepository();
     final user = const AuthUser(id: '1', email: 'test@test.com');
     when(repository.currentUser).thenAnswer((_) async => user);
-    final container = ProviderContainer(overrides: [authRepositoryProvider.overrideWithValue(repository)]);
+    final container = ProviderContainer(
+      overrides: <ProviderOverride>[authRepositoryProvider.overrideWithValue(repository)],
+    );
     addTearDown(container.dispose);
     await container.read(authNotifierProvider.future);
     container.read(authNotifierProvider.notifier).state = AsyncData(AuthState(status: AuthStatus.authenticated, user: user));
@@ -54,7 +59,6 @@ void main() {
     final state = _MockGoRouterState();
     when(() => state.matchedLocation).thenReturn('/login');
     when(() => state.uri).thenReturn(Uri.parse('/login'));
-    when(() => state.queryParameters).thenReturn(<String, String>{});
 
     final redirect = guard.redirect(_FakeBuildContext(), state);
 

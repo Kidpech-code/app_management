@@ -8,17 +8,17 @@ import 'package:flutter/foundation.dart';
 class DioClient {
   DioClient({
     required AppConfig config,
-    required AuthInterceptor authInterceptor,
-    required RetryInterceptor retryInterceptor,
     required AppLogger logger,
+    AuthInterceptor? authInterceptor,
+    RetryInterceptor? retryInterceptor,
   })  : _config = config,
         _authInterceptor = authInterceptor,
         _retryInterceptor = retryInterceptor,
         _logger = logger;
 
   final AppConfig _config;
-  final AuthInterceptor _authInterceptor;
-  final RetryInterceptor _retryInterceptor;
+  final AuthInterceptor? _authInterceptor;
+  final RetryInterceptor? _retryInterceptor;
   final AppLogger _logger;
 
   Dio create() {
@@ -30,11 +30,12 @@ class DioClient {
         sendTimeout: const Duration(seconds: 10),
       ),
     );
-    dio.interceptors.addAll([
-      _authInterceptor..attach(dio),
-      _retryInterceptor..attach(dio),
+    final interceptors = <Interceptor>[
+      if (_authInterceptor != null) _authInterceptor!..attach(dio),
+      if (_retryInterceptor != null) _retryInterceptor!..attach(dio),
       if (_config.enableLogging && kDebugMode) LogInterceptor(requestBody: true, responseBody: true),
-    ]);
+    ];
+    dio.interceptors.addAll(interceptors);
     dio.options.extra['dio_client'] = true;
     _logger.debug('Dio client configured for ${_config.apiBaseUrl}.');
     return dio;

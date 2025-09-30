@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:riverpod/riverpod.dart' show ProviderOverride;
 
 import 'package:app_management/app/app.dart';
 import 'package:app_management/app/di/providers.dart';
@@ -14,7 +15,7 @@ import 'package:app_management/core/storage/hive_manager.dart';
 import 'package:app_management/core/utils/logger.dart';
 import 'package:app_management/features/example_todos/infrastructure/models/todo_dto.dart';
 
-Future<void> bootstrap({AppConfig? config, List<Override> overrides = const <Override>[], Widget? rootWidget}) async {
+Future<void> bootstrap({AppConfig? config, List<ProviderOverride> overrides = const <ProviderOverride>[], Widget? rootWidget}) async {
   WidgetsFlutterBinding.ensureInitialized();
   final resolvedConfig = config ?? AppConfig.fromEnvironment();
   final logger = AppLogger(config: resolvedConfig);
@@ -26,7 +27,7 @@ Future<void> bootstrap({AppConfig? config, List<Override> overrides = const <Ove
   await hiveManager.openCoreBoxes();
 
   final container = ProviderContainer(
-    overrides: <Override>[
+    overrides: <ProviderOverride>[
       appConfigProvider.overrideWithValue(resolvedConfig),
       hiveManagerProvider.overrideWithValue(hiveManager),
       ...overrides,

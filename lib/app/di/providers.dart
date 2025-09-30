@@ -31,15 +31,35 @@ final connectivityServiceProvider = Provider<ConnectivityService>((ref) {
 
 final authLocalDataSourceProvider = Provider<AuthLocalDataSource>((ref) => AuthLocalDataSource());
 
+final authDioProvider = Provider<Dio>((ref) {
+  final config = ref.watch(appConfigProvider);
+  final logger = ref.watch(loggerProvider);
+  final connectivity = ref.watch(connectivityServiceProvider);
+  final retryInterceptor = RetryInterceptor(connectivity: connectivity, logger: logger);
+  final client = DioClient(
+    config: config,
+    logger: logger,
+    retryInterceptor: retryInterceptor,
+  );
+  return client.create();
+});
+
+final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) => AuthRemoteDataSource(ref.watch(authDioProvider)));
+
+final authRepositoryProvider = Provider<AuthRepository>((ref) {
+  return AuthRepositoryImpl(remote: ref.watch(authRemoteDataSourceProvider), local: ref.watch(authLocalDataSourceProvider));
+});
+
 final dioProvider = Provider<Dio>((ref) {
   final config = ref.watch(appConfigProvider);
   final logger = ref.watch(loggerProvider);
   final authLocal = ref.watch(authLocalDataSourceProvider);
   final connectivity = ref.watch(connectivityServiceProvider);
+  final authRepository = ref.watch(authRepositoryProvider);
 
   final authInterceptor = AuthInterceptor(
-    readAccessToken: () => authLocal.readAccessToken(),
-    refreshAccessToken: () async => (await ref.read(authRepositoryProvider).refreshToken())?.accessToken,
+    readAccessToken: authLocal.readAccessToken,
+    refreshAccessToken: () async => (await authRepository.refreshToken())?.accessToken,
     onUnauthorized: () async {
       await authLocal.clearSession();
       ref.invalidate(authNotifierProvider);
@@ -49,17 +69,11 @@ final dioProvider = Provider<Dio>((ref) {
   final retryInterceptor = RetryInterceptor(connectivity: connectivity, logger: logger);
   final client = DioClient(
     config: config,
+    logger: logger,
     authInterceptor: authInterceptor,
     retryInterceptor: retryInterceptor,
-    logger: logger,
   );
   return client.create();
-});
-
-final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) => AuthRemoteDataSource(ref.watch(dioProvider)));
-
-final authRepositoryProvider = Provider<AuthRepository>((ref) {
-  return AuthRepositoryImpl(remote: ref.watch(authRemoteDataSourceProvider), local: ref.watch(authLocalDataSourceProvider));
 });
 
 final todoLocalDataSourceProvider = Provider<TodoLocalDataSource>((ref) => TodoLocalDataSource());
