@@ -7,7 +7,6 @@ import 'package:app_management/features/auth/domain/repositories/auth_repository
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:riverpod/riverpod.dart' show ProviderOverride;
 
 class _MockAuthRepository extends Mock implements AuthRepository {}
 
@@ -18,7 +17,7 @@ void main() {
   setUp(() {
     repository = _MockAuthRepository();
     container = ProviderContainer(
-      overrides: <ProviderOverride>[authRepositoryProvider.overrideWithValue(repository)],
+      overrides: <Override>[authRepositoryProvider.overrideWithValue(repository)],
     );
   });
 

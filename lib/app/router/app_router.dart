@@ -15,8 +15,7 @@ import 'package:app_management/features/settings/presentation/screens/settings_p
 
 final routerProvider = Provider<GoRouter>((ref) {
   final guard = AuthGuard(ref);
-  final notifier = ref.read(authNotifierProvider.notifier);
-  final refreshListenable = StreamRouterRefreshListenable(notifier.stream);
+  final refreshListenable = ProviderRouterRefreshListenable(ref, authNotifierProvider);
   final router = GoRouter(
     initialLocation: TodosRoute.location,
     routes: <RouteBase>[
@@ -97,15 +96,20 @@ class SettingsRoute {
   static void go(BuildContext context) => context.go(location);
 }
 
-class StreamRouterRefreshListenable extends ChangeNotifier {
-  StreamRouterRefreshListenable(Stream<dynamic> stream)
-      : _subscription = stream.listen((_) => notifyListeners());
+class ProviderRouterRefreshListenable extends ChangeNotifier {
+  ProviderRouterRefreshListenable(Ref ref, ProviderListenable<dynamic> listenable) {
+    _subscription = ref.listen<dynamic>(
+      listenable,
+      (_, __) => notifyListeners(),
+      fireImmediately: false,
+    );
+  }
 
-  final StreamSubscription<dynamic> _subscription;
+  late final ProviderSubscription<dynamic> _subscription;
 
   @override
   void dispose() {
-    _subscription.cancel();
+    _subscription.close();
     super.dispose();
   }
 }
