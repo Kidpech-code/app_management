@@ -9,7 +9,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:riverpod/riverpod.dart' show ProviderOverride;
 
 class _MockAuthRepository extends Mock implements AuthRepository {}
 
@@ -29,7 +28,7 @@ void main() {
     when(repository.currentUser).thenAnswer((_) async => null);
     // ignore: lines_longer_than_80_chars
     final container = ProviderContainer(
-      overrides: <ProviderOverride>[authRepositoryProvider.overrideWithValue(repository)],
+      overrides: <Override>[authRepositoryProvider.overrideWithValue(repository)],
     );
     addTearDown(container.dispose);
     await container.read(authNotifierProvider.future);
@@ -49,7 +48,7 @@ void main() {
     final user = const AuthUser(id: '1', email: 'test@test.com');
     when(repository.currentUser).thenAnswer((_) async => user);
     final container = ProviderContainer(
-      overrides: <ProviderOverride>[authRepositoryProvider.overrideWithValue(repository)],
+      overrides: <Override>[authRepositoryProvider.overrideWithValue(repository)],
     );
     addTearDown(container.dispose);
     await container.read(authNotifierProvider.future);

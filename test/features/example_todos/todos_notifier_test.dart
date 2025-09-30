@@ -9,7 +9,6 @@ import 'package:app_management/features/example_todos/domain/repositories/todo_r
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:riverpod/riverpod.dart' show ProviderOverride;
 
 class _MockTodoRepository extends Mock implements TodoRepository {}
 
@@ -21,7 +20,7 @@ void main() {
     repository = _MockTodoRepository();
     when(repository.watchTodos).thenAnswer((_) => const Stream<List<Todo>>.empty());
     container = ProviderContainer(
-      overrides: <ProviderOverride>[todoRepositoryProvider.overrideWithValue(repository)],
+      overrides: <Override>[todoRepositoryProvider.overrideWithValue(repository)],
     );
   });
 
