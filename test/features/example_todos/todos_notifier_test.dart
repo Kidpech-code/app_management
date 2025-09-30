@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app_management/app/di/providers.dart';
 import 'package:app_management/core/error/failures.dart';
 import 'package:app_management/core/error/result.dart';
@@ -57,5 +59,25 @@ void main() {
 
     final data = container.read(todosNotifierProvider).value;
     expect(data, [...firstPage, ...secondPage]);
+  });
+
+  test('ignores loadMore while a previous request is in flight', () async {
+    final firstPage = <Todo>[Todo(id: '1', title: 'A', isCompleted: false, updatedAt: DateTime.now())];
+    final completer = Completer<Result<List<Todo>>>();
+    when(() => repository.fetchTodos(page: 1, cancelToken: any(named: 'cancelToken')))
+        .thenAnswer((_) async => Success<List<Todo>>(firstPage));
+    when(() => repository.fetchTodos(page: 2, cancelToken: any(named: 'cancelToken')))
+        .thenAnswer((_) => completer.future);
+
+    await container.read(todosNotifierProvider.future);
+    final notifier = container.read(todosNotifierProvider.notifier);
+
+    final loadFuture = notifier.loadMore();
+    notifier.loadMore();
+
+    verify(() => repository.fetchTodos(page: 2, cancelToken: any(named: 'cancelToken'))).called(1);
+
+    completer.complete(const Success<List<Todo>>(<Todo>[]));
+    await loadFuture;
   });
 }
